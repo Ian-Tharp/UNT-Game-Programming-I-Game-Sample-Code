@@ -16,14 +16,14 @@ public:
 
 protected:
 	void RotateTowards(const Vector2&); ///< Swivel towards position.
-	void ShootAtTarget(const Vector2& position);
 
-	//Removed health for now, the implementation of enemies to potentially
+	//Removed health for now, the implementation of tower to potentially
 	//die or get destroyed could be added later
-	//const UINT m_MaxHealth = 8; ///< Maximum health.
-	//UINT m_Health = m_MaxHealth; ///< Current health.
-	const UINT m_TowerCost = 0;
+	//const INT MaxHealth = 8; ///< Maximum health.
+	//int Health = MaxHealth; ///< Current health initially.
+	const INT TowerCost = 10;
+	float fireRate;
 
 };
 
-#endif //__L$RC_GAME_TOWER_H__
+#endif //__L4RC_GAME_TOWER_H__
