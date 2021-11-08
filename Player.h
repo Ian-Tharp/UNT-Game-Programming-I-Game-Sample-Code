@@ -35,7 +35,7 @@ class CPlayer: public CObject{
     virtual void move(); ///< Move player object.
 
 	//Player interaction to place towers
-	void PlaceTower(int Tower);
+	bool PlaceTower(int Tower);
 
 	//Player movement across grid tiles
 	void MoveRight();
@@ -55,6 +55,7 @@ class CPlayer: public CObject{
     
 	std::string GetCurrency();
 	std::string GetLives();
+	std::string GetTAmount(std::vector<CTower*> amount);
 
     const Vector2& GetPos() const; ///< Get position of sprite
 	std::string GetPlayerPosition(); ///< Get position of player sprite
