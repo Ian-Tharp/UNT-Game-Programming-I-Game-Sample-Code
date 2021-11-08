@@ -8,7 +8,6 @@
 #include "ComponentIncludes.h"
 #include "ParticleEngine.h"
 #include "TileManager.h"
-
 #include "shellapi.h"
 #include <fstream>
 #include <iostream>
@@ -40,7 +39,19 @@ void CGame::Initialize(){
 
   pMap = new mapGen();
 
-  BeginGame();
+  cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2);
+
+  Menus[0] = true;
+  Menus[1] = false;
+  Menus[2] = false;
+  Menus[3] = false;
+
+  MenuButtonNums[0] = 0;
+  MenuButtonNums[1] = 0;
+  MenuButtonNums[2] = 0;
+  MenuButtonNums[3] = 0;
+
+  MainMenu();
 } //Initialize
 
 /// Load the specific images needed for this game. This is where `eSprite`
@@ -53,8 +64,14 @@ void CGame::Initialize(){
 void CGame::LoadImages(){  
   m_pRenderer->BeginResourceUpload();
 
-  m_pRenderer->Load(eSprite::Tile,    "tile");
-  m_pRenderer->Load(eSprite::BlueTile,"BlueTile");
+  m_pRenderer->Load(eSprite::Background, "Background");
+  m_pRenderer->Load(eSprite::BlueTile, "BlueTile");
+  m_pRenderer->Load(eSprite::BrownTile, "BrownTile");
+  m_pRenderer->Load(eSprite::GrayTile, "GrayTile");
+  m_pRenderer->Load(eSprite::RedTile, "RedTile");
+  m_pRenderer->Load(eSprite::MenuUButton, "MenuUButton");
+  m_pRenderer->Load(eSprite::MenuPButton, "MenuPButton");
+  m_pRenderer->Load(eSprite::MenuCursor, "MenuCursor");
   m_pRenderer->Load(eSprite::Player,  "player");
   m_pRenderer->Load(eSprite::Bullet,  "bullet");
   m_pRenderer->Load(eSprite::Bullet2, "bullet2");
@@ -100,6 +117,47 @@ void CGame::CreateObjects(){
     m_pObjectManager->create(eSprite::Turret, pos);
 } //CreateObjects
 
+void CGame::MainMenu() {
+    m_pParticleEngine->clear(); //clear old particles
+    m_pObjectManager->clear(); //clear old objects
+    m_bScreenText = false;
+
+    pMap->createBlankMap();
+    m_pTileManager->LoadEmptyMap(pMap->getTileMap());
+
+    for (int i = enemies.size() - 1; i >= 0; i--) {
+        delete enemies[i];
+    }
+    enemies.clear();
+    for (int i = baseTowers.size() - 1; i >= 0; i--) {
+        delete baseTowers[i];
+    }
+    baseTowers.clear();
+
+    m_eGameState = eGameState::Waiting;
+}
+
+void CGame::LevelMenu() {
+    m_pParticleEngine->clear(); //clear old particles
+    m_pObjectManager->clear(); //clear old objects
+
+
+}
+
+void CGame::Settings() {
+    m_pParticleEngine->clear(); //clear old particles
+    m_pObjectManager->clear(); //clear old objects
+
+
+}
+
+void CGame::Help() {
+    m_pParticleEngine->clear(); //clear old particles
+    m_pObjectManager->clear(); //clear old objects
+
+
+}
+
 /// Call this function to start a new game. This should be re-entrant so that
 /// you can restart a new game without having to shut down and restart the
 /// program. Clear the particle engine to get rid of any existing particles,
@@ -107,6 +165,11 @@ void CGame::CreateObjects(){
 
 void CGame::BeginGame(){  
   m_pParticleEngine->clear(); //clear old particles
+
+  for (int i = enemies.size() - 1; i >= 0; i--) {
+      delete enemies[i];
+  }
+  enemies.clear();
 
   pMap->createNewMap();
   m_pTileManager->LoadMap(pMap->getTileMap());
@@ -120,8 +183,8 @@ void CGame::BeginGame(){
   
   m_pObjectManager->clear(); //clear old objects
   CreateObjects(); //create new objects (must be after map is loaded) 
-  m_pAudio->stop(); //stop all currently playing sounds
-  m_pAudio->play(eSound::Start); //play start-of-game sound
+  //m_pAudio->stop(); //stop all currently playing sounds
+  //m_pAudio->play(eSound::Start); //play start-of-game sound
   m_eGameState = eGameState::Playing; //now playing
   //DrawVariablesToScreen();
   m_bScreenText = true;
@@ -139,90 +202,220 @@ void CGame::BeginGame(){
 
 void CGame::KeyboardHandler(){
   m_pKeyboard->GetState(); //get current keyboard state
-  if (m_pKeyboard->TriggerDown(VK_RETURN)) {
-	  m_nNextLevel = (m_nNextLevel + 1) % 4;
-	  BeginGame();
-  } //if
-  
-  if (m_pKeyboard->TriggerDown(VK_SPACE)) {
-	  m_pPlayer->RemoveCurrency(5);
-	  m_bGodMode = !m_bGodMode;
+  if (m_eGameState == eGameState::Waiting) {
+      if (Menus[0]) {
+          if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[0] == 0) { //Level menu
+              //m_nNextLevel = (m_nNextLevel + 1) % 4;
+              MenuButtonNums[0] = 0;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[1]));
+              Menus[0] = false;
+              Menus[1] = true;
+          } //if
+          else if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[0] == 1) { //settings menu
+              //m_nNextLevel = (m_nNextLevel + 1) % 4;
+              MenuButtonNums[0] = 0;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[2]));
+              Menus[0] = false;
+              Menus[2] = true;
+          } //if
+          else if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[0] == 2) { //help screen
+              //m_nNextLevel = (m_nNextLevel + 1) % 4;
+              MenuButtonNums[0] = 0;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[3]));
+              Menus[0] = false;
+              Menus[3] = true;
+          } //if
+
+          if (m_pKeyboard->TriggerDown('W') && MenuButtonNums[0] != 0) {
+              MenuButtonNums[0] -= 1;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[0]));
+          }
+          if (m_pKeyboard->TriggerDown('S') && MenuButtonNums[0] != 2) {
+              MenuButtonNums[0] += 1;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[0]));
+          }
+      }
+      else if (Menus[1]) {
+          if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[1] == 0) {
+              //m_nNextLevel = (m_nNextLevel + 1) % 4;
+              MenuButtonNums[1] = 0;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[0]));
+              Menus[1] = false;
+              BeginGame();
+          } //if
+          else if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[1] == 2) {
+              MenuButtonNums[1] = 0;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[0]));
+              Menus[0] = true;
+              Menus[1] = false;
+          }
+
+          if (m_pKeyboard->TriggerDown('W') && MenuButtonNums[1] != 0) {
+              MenuButtonNums[1] -= 1;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[1]));
+          }
+          if (m_pKeyboard->TriggerDown('S') && MenuButtonNums[1] != 2) {
+              MenuButtonNums[1] += 1;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[1]));
+          }
+      }
+      else if (Menus[2]) {
+          if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[2] == 0) {
+              //m_nNextLevel = (m_nNextLevel + 1) % 4;
+          } //if
+          else if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[2] == 2) {
+              //m_nNextLevel = (m_nNextLevel + 1) % 4;
+              MenuButtonNums[2] = 0;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[0]));
+              Menus[0] = true;
+              Menus[2] = false;
+          } //if
+
+          if (m_pKeyboard->TriggerDown('W') && MenuButtonNums[2] != 0) {
+              MenuButtonNums[2] -= 1;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[2]));
+          }
+          if (m_pKeyboard->TriggerDown('S') && MenuButtonNums[2] != 2) {
+              MenuButtonNums[2] += 1;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[2]));
+          }
+      }
+      else if (Menus[3]) {
+          if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[3] == 0) {
+              //m_nNextLevel = (m_nNextLevel + 1) % 4;
+          } //if
+          else if (m_pKeyboard->TriggerDown(VK_RETURN) && MenuButtonNums[3] == 2) {
+              //m_nNextLevel = (m_nNextLevel + 1) % 4;
+              MenuButtonNums[3] = 0;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[0]));
+              Menus[0] = true;
+              Menus[3] = false;
+          } //if
+
+          if (m_pKeyboard->TriggerDown('W') && MenuButtonNums[3] != 0) {
+              MenuButtonNums[3] -= 1;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[3]));
+          }
+          if (m_pKeyboard->TriggerDown('S') && MenuButtonNums[3] != 2) {
+              MenuButtonNums[3] += 1;
+              cursorPos = Vector2(m_nWinWidth / 2 - 200, m_nWinHeight / 2 - (125 * MenuButtonNums[3]));
+          }
+      }
   }
+  else if (m_eGameState == eGameState::Playing) {
+      if (m_pKeyboard->TriggerDown(VK_RETURN) && m_bGodMode) {
+          //m_nNextLevel = (m_nNextLevel + 1) % 4;
+          BeginGame();
+      } //if
+      if (m_pKeyboard->TriggerDown(VK_SPACE)) {
+          //m_pPlayer->RemoveCurrency(5);
+          m_bGodMode = !m_bGodMode;
+      }
 
-  if(m_pKeyboard->TriggerDown(VK_F1)) //help
-    ShellExecute(0, 0, "https://larc.unt.edu/code/topdown/", 0, 0, SW_SHOW);
-  
-  if(m_pKeyboard->TriggerDown(VK_F2)) //toggle frame rate
-    m_bDrawFrameRate = !m_bDrawFrameRate;
-  
-  if(m_pKeyboard->TriggerDown(VK_F3)) //toggle AABB drawing
-    m_bDrawAABBs = !m_bDrawAABBs; 
+      //Kill Switch... I Got Tired Of Waiting To Die
+      if (m_pKeyboard->Down(VK_CONTROL) && m_pKeyboard->Down('K') && m_bGodMode) {
+          m_pPlayer->RemoveLives(1000);
+          m_bGodMode = !m_bGodMode;
+      }
 
-  //-----------------------------------------------------------------------------------------
-  //Player controls to move from tile to tile
-  //Move Player Right
-  if (m_pKeyboard->TriggerDown('D'))
-	m_pPlayer->MoveRight();
-    m_pPlayer->move();
-    m_pPlayer->StopRight();
-	
-  if (m_pKeyboard->TriggerDown(VK_RIGHT))
-	m_pPlayer->MoveRight();
-	m_pPlayer->move();
-	m_pPlayer->StopRight();
-  
-  //Move Player Left
-  if (m_pKeyboard->TriggerDown('A'))
-	m_pPlayer->MoveLeft();
-    m_pPlayer->move();
-    m_pPlayer->StopLeft();
+      if (m_pKeyboard->TriggerDown(VK_F1)) //help
+          ShellExecute(0, 0, "https://larc.unt.edu/code/topdown/", 0, 0, SW_SHOW);
 
-  if (m_pKeyboard->TriggerDown(VK_LEFT))
-	m_pPlayer->MoveLeft();
-	m_pPlayer->move();
-	m_pPlayer->StopLeft();
+      if (m_pKeyboard->TriggerDown(VK_F2)) //toggle frame rate
+          m_bDrawFrameRate = !m_bDrawFrameRate;
 
-  //Move Player Down
-  if (m_pKeyboard->TriggerDown('W'))
-	m_pPlayer->MoveDown();
-    m_pPlayer->move();
-    m_pPlayer->StopDown();
+      if (m_pKeyboard->TriggerDown(VK_F3)) //toggle AABB drawing
+          m_bDrawAABBs = !m_bDrawAABBs;
 
-  if (m_pKeyboard->TriggerDown(VK_UP))
-	m_pPlayer->MoveDown();
-	m_pPlayer->move();
-	m_pPlayer->StopDown();
+      //-----------------------------------------------------------------------------------------
+      //Player controls to move from tile to tile
+      //Move Player Right
+      if (m_pKeyboard->TriggerDown('D'))
+          m_pPlayer->MoveRight();
+      m_pPlayer->move();
+      m_pPlayer->StopRight();
 
-  //Move Player Up
-  if (m_pKeyboard->TriggerDown('S'))
-	m_pPlayer->MoveUp();
-    m_pPlayer->move();
-    m_pPlayer->StopUp();
+      if (m_pKeyboard->TriggerDown(VK_RIGHT))
+          m_pPlayer->MoveRight();
+      m_pPlayer->move();
+      m_pPlayer->StopRight();
 
-  if (m_pKeyboard->TriggerDown(VK_DOWN))
-	m_pPlayer->MoveUp();
-	m_pPlayer->move();
-	m_pPlayer->StopUp();
+      //Move Player Left
+      if (m_pKeyboard->TriggerDown('A'))
+          m_pPlayer->MoveLeft();
+      m_pPlayer->move();
+      m_pPlayer->StopLeft();
 
+      if (m_pKeyboard->TriggerDown(VK_LEFT))
+          m_pPlayer->MoveLeft();
+      m_pPlayer->move();
+      m_pPlayer->StopLeft();
 
-  //Controls for the player to place tower
-  if (m_pKeyboard->TriggerDown('1'))
-	  if (CheckTile()) {
-		  m_pPlayer->PlaceTower(1);
-	  }
+      //Move Player Down
+      if (m_pKeyboard->TriggerDown('W'))
+          m_pPlayer->MoveDown();
+      m_pPlayer->move();
+      m_pPlayer->StopDown();
 
+      if (m_pKeyboard->TriggerDown(VK_UP))
+          m_pPlayer->MoveDown();
+      m_pPlayer->move();
+      m_pPlayer->StopDown();
 
-  if(m_pKeyboard->TriggerDown(VK_BACK)) //start game
-    BeginGame();
+      //Move Player Up
+      if (m_pKeyboard->TriggerDown('S'))
+          m_pPlayer->MoveUp();
+      m_pPlayer->move();
+      m_pPlayer->StopUp();
 
-  if (m_pKeyboard->TriggerDown('E'))
-  {
-      eCounter = 0;
-      auto startPoint = pMap->getStartPoint();
-      //m_pEnemy = new CEnemy(CEnemy::GetPos(startPoint));
-      for (int i = 0; i <= 0; i++)
+      if (m_pKeyboard->TriggerDown(VK_DOWN))
+          m_pPlayer->MoveUp();
+      m_pPlayer->move();
+      m_pPlayer->StopUp();
+
+      //-----------------------------------------------------------------------------------------
+      //Controls for the player to place tower
+      if (m_pKeyboard->TriggerDown('1'))
+          if (CheckTile()) {
+              m_pPlayer->PlaceTower(1);
+              int i = 0;
+              int j = 0;
+              i = m_pPlayer->GetXPos();
+              j = m_pPlayer->GetYPos();
+              for (int k = 0; k <= 0; k++) {
+                  //for (int m = 0; m <= baseTowers.size(); m++) {
+                      //if (baseTowers[m]->GetXPos != m_pPlayer->GetXPos() && baseTowers[m]->GetYPos != m_pPlayer->GetYPos())
+                  baseTowers.push_back(new CTower(i, j, m_pPlayer->m_vPos));
+                  //break;
+              //}
+              }
+          }
+      if (m_pKeyboard->TriggerDown('2'))
+          if (CheckTile()) {
+              if (m_pPlayer->PlaceTower(2)) {
+                  int i = 0;
+                  int j = 0;
+                  i = m_pPlayer->GetXPos();
+                  j = m_pPlayer->GetYPos();
+                  // dont use i so it doesn't override position
+                  /*for (int i = 0; i <= 0; i++) {
+                      ts.push_back(new CTurret(CTurret::GetPosition(i, j)));
+                  }*/
+              }
+          }
+
+      //if (m_pKeyboard->TriggerDown(VK_BACK)) //start game
+          //BeginGame();
+
+      if (m_pKeyboard->TriggerDown('E'))
       {
-          enemies.push_back(new CEnemy(CEnemy::GetPos(startPoint)));
+          eCounter = 0;
+          auto startPoint = pMap->getStartPoint();
+          //m_pEnemy = new CEnemy(CEnemy::GetPos(startPoint));
+          for (int i = 0; i <= 0; i++)
+          {
+              enemies.push_back(new CEnemy(CEnemy::GetPos(startPoint)));
+          }
       }
   }
 } //KeyboardHandler
@@ -242,19 +435,15 @@ void CGame::ControllerHandler(){
 void CGame::DrawFrameRateText(){
   const std::string s = std::to_string(m_pTimer->GetFPS()) + " fps"; //frame rate
   const Vector2 pos(m_nWinWidth - 128.0f, 30.0f); //hard-coded position
-  m_pRenderer->DrawScreenText(s.c_str(), pos); //draw to screen
+  m_pRenderer->DrawScreenText(s.c_str(), pos, Colors::White); //draw to screen
 } //DrawFrameRateText
 
 /// Draw the god mode text to a hard-coded position in the window using the
 /// font specified in `gamesettings.xml`.
 
 void CGame::DrawGodModeText(){
-  const Vector2 pos(32.0f, 10.0f); //hard-coded position
-  //const Vector2 pos2(32.0f, 20.0f); //hard-coded position
-
-  m_pRenderer->DrawScreenText("God Mode", pos); //draw to screen
-  //m_pRenderer->DrawScreenText(m_pPlayer->GetCurrency().c_str(), pos2);
-  //m_pRenderer->DrawScreenText(m_pPlayer->GetPlayerPosition().c_str(), pos3);
+  const Vector2 pos(32.0f, 5.0f); //hard-coded position
+  m_pRenderer->DrawScreenText("God Mode", pos, Colors::Red); //draw to screen
 } //DrawGodModeText
 
 /// Ask the object manager to draw the game objects. The renderer is notified of
@@ -264,7 +453,36 @@ void CGame::DrawGodModeText(){
 void CGame::RenderFrame(){
   m_pRenderer->BeginFrame(); //required before rendering
 
-  m_pObjectManager->draw(); //draw objects
+  //Images are being offset after kicking back from game to menu
+  m_pRenderer->Draw(eSprite::Background, m_vWinCenter); //draw background
+  if (Menus[0]) { //Main Menu
+      m_pRenderer->Draw(eSprite::MenuCursor, cursorPos);
+      m_pRenderer->Draw(eSprite::MenuUButton, Vector2(m_nWinWidth / 2, m_nWinHeight / 2));
+      m_pRenderer->DrawScreenText("Start Game", Vector2(m_nWinWidth / 2 - 80, m_nWinHeight / 2 - 20), Colors::Azure);
+      m_pRenderer->Draw(eSprite::MenuUButton, Vector2(m_nWinWidth / 2, m_nWinHeight / 2 - 125));
+      m_pRenderer->DrawScreenText("Settings", Vector2(m_nWinWidth / 2 - 57, m_nWinHeight / 2 + 105), Colors::Azure);
+      m_pRenderer->Draw(eSprite::MenuUButton, Vector2(m_nWinWidth / 2, m_nWinHeight / 2 - 250));
+      m_pRenderer->DrawScreenText("Help", Vector2(m_nWinWidth / 2 - 35, m_nWinHeight / 2 + 230), Colors::Azure);
+  }
+  else if (Menus[1]) { //Level Menu
+      m_pRenderer->Draw(eSprite::MenuCursor, cursorPos);
+      m_pRenderer->Draw(eSprite::MenuUButton, Vector2(m_nWinWidth / 2, m_nWinHeight / 2));
+      m_pRenderer->DrawScreenText("Start Game", Vector2(m_nWinWidth / 2 - 80, m_nWinHeight / 2 - 20), Colors::Azure);
+      m_pRenderer->Draw(eSprite::MenuUButton, Vector2(m_nWinWidth / 2, m_nWinHeight / 2 - 250));
+      m_pRenderer->DrawScreenText("Back", Vector2(m_nWinWidth / 2 - 40, m_nWinHeight / 2 + 230), Colors::Azure);
+  }
+  else if (Menus[2]) { //Settings
+      m_pRenderer->Draw(eSprite::MenuCursor, cursorPos);
+      m_pRenderer->Draw(eSprite::MenuUButton, Vector2(m_nWinWidth / 2, m_nWinHeight / 2 - 250));
+      m_pRenderer->DrawScreenText("Back", Vector2(m_nWinWidth / 2 - 40, m_nWinHeight / 2 + 230), Colors::Azure);
+  }
+  else if (Menus[3]) { //Help
+      m_pRenderer->Draw(eSprite::MenuCursor, cursorPos);
+      m_pRenderer->Draw(eSprite::MenuUButton, Vector2(m_nWinWidth / 2, m_nWinHeight / 2 - 250));
+      m_pRenderer->DrawScreenText("Back", Vector2(m_nWinWidth / 2 - 40, m_nWinHeight / 2 + 230), Colors::Azure);
+  }
+
+  m_pObjectManager->draw(pMap->getTileColor()); //draw objects
   m_pParticleEngine->Draw(); //draw particles
   if(m_bDrawFrameRate)DrawFrameRateText(); //draw frame rate, if required
   if(m_bGodMode)DrawGodModeText(); //draw god mode text, if required
@@ -275,6 +493,18 @@ void CGame::RenderFrame(){
       if (enemies[i] != NULL)
           enemies[i]->draw();
   }
+
+  for (int i = 0; i < baseTowers.size(); i++) {
+      if (baseTowers[i] != NULL) {
+          baseTowers[i]->draw();
+      }
+  }
+
+  /*for (int i = 0; i < ts.size(); i++) {
+        if (ts[i] != NULL) {
+            ts[i]->draw();
+        }
+    }*/
 
   m_pRenderer->EndFrame(); //required after rendering
 } //RenderFrame
@@ -288,10 +518,15 @@ void CGame::FollowCamera(){
 
   Vector3 vCameraPos(m_pPlayer->GetPos()); //player position
 
-  vCameraPos.x = m_vWorldSize.x / 2.0f; // center camera horizontally
-  vCameraPos.y = m_vWorldSize.y / 2.0f; // center camera vertically
-  
-										
+  if (Menus[0] || Menus[1] || Menus[2] || Menus[3]) {
+      vCameraPos.x = m_nWinWidth / 2.0f; // center camera horizontally
+      vCameraPos.y = m_nWinHeight / 2.0f; // center camera vertically
+  }
+  else {
+      vCameraPos.x = m_vWorldSize.x / 2.0f; // center camera horizontally
+      vCameraPos.y = m_vWorldSize.y / 2.0f; // center camera vertically
+  }
+  								
   m_pRenderer->SetCameraPos(vCameraPos); //camera to player
 } //FollowCamera
 
@@ -327,6 +562,10 @@ void CGame::ProcessFrame(){
         }
     }
 
+    for (int i = 0; i < baseTowers.size(); i++) {
+        if (baseTowers[i] != NULL)
+            baseTowers[i]->move();
+    }
 
     m_pParticleEngine->step(); //advance particle animation
   });
@@ -347,19 +586,21 @@ void CGame::ProcessGameState(){
   switch(m_eGameState){
     case eGameState::Playing:
       //IF LIVES == 0
-      if(m_pPlayer == nullptr || m_pObjectManager->GetNumTurrets() == 0){
-        m_eGameState = eGameState::Waiting; //now waiting
+      if(m_pPlayer == nullptr || stoi(m_pPlayer->GetLives()) <= 0){
+        //m_eGameState = eGameState::Waiting; //now waiting
         t = m_pTimer->GetTime(); //start wait timer
+        MainMenu();
+        Menus[0] = true;
       } //if
       break;
 
     //KICK BACK TO MAIN MENU OR DEATH SCREEN TO DECIDE TO RESTART OR END GAME.
     case eGameState::Waiting:
-      if(m_pTimer->GetTime() - t > 3.0f){ //3 seconds has elapsed since level end
-        if(m_pObjectManager->GetNumTurrets() == 0) //player won
-          m_nNextLevel = (m_nNextLevel + 1)%4; //advance next level
+      //if(m_pTimer->GetTime() - t > 3.0f){ //3 seconds has elapsed since level end
+        //if(m_pObjectManager->GetNumTurrets() == 0) //player won
+          //m_nNextLevel = (m_nNextLevel + 1)%4; //advance next level
         //BeginGame(); //restart game
-      } //if
+      //} //if
       break;
   } //switch
 } //CheckForEndOfGame
@@ -368,17 +609,19 @@ void CGame::DrawVariablesToScreen() {
 	const Vector2 PlayerPosition(500.0f, 5.0f);
 	const Vector2 CurrentCurrency(700.0f, 5.0f);
 	const Vector2 Lives(900.0f, 5.0f);
+    const Vector2 tAmount(250.0f, 5.0f);
 
-	m_pRenderer->DrawScreenText(m_pPlayer->GetPlayerPosition().c_str(), PlayerPosition);
-	m_pRenderer->DrawScreenText(m_pPlayer->GetCurrency().c_str(), CurrentCurrency);
-	m_pRenderer->DrawScreenText(m_pPlayer->GetLives().c_str(), Lives);
+	m_pRenderer->DrawScreenText(m_pPlayer->GetPlayerPosition().c_str(), PlayerPosition, Colors::Azure);
+	m_pRenderer->DrawScreenText(m_pPlayer->GetCurrency().c_str(), CurrentCurrency, Colors::Gold);
+	m_pRenderer->DrawScreenText(m_pPlayer->GetLives().c_str(), Lives, Colors::Crimson);
+    m_pRenderer->DrawScreenText(m_pPlayer->GetLives().c_str(), Lives, Colors::Crimson);
 }
 
 bool CGame::CheckTile() {
-	if (m_pTileManager->GetTile(m_pPlayer->GetXPos(), m_pPlayer->GetYPos() == 'T')) {
+	if (m_pTileManager->GetTile(m_pPlayer->GetXPos(), m_pPlayer->GetYPos()) == 'T') {
 		return true;
 	}
 	else {
-		return true;
+		return false;
 	}
 }
