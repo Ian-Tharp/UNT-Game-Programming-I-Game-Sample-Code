@@ -11,8 +11,16 @@
 class CTower : public CObject {
 public:
 	CTower(const Vector2& p); ///< Constructor.
+	CTower(int i, int j, Vector2& p);
 	virtual void move(); ///< Move turret.
-	virtual void draw(); ///< Draw turret.
+	//virtual void draw(); ///< Draw turret.
+
+	static const Vector2& GetPosition(int x, int y);
+
+	int GetXPos();
+	int GetYPos();
+	void SetXPos(int x);
+	void SetYPos(int y);
 
 protected:
 	void RotateTowards(const Vector2&); ///< Swivel towards position.
@@ -22,7 +30,9 @@ protected:
 	//const INT MaxHealth = 8; ///< Maximum health.
 	//int Health = MaxHealth; ///< Current health initially.
 	const INT TowerCost = 10;
-	float fireRate;
+
+	int xPos = 0;
+	int yPos = 0;
 
 };
 
