@@ -140,10 +140,31 @@ std::string CPlayer::GetLives() {
 	return lives;
 }
 
-void CPlayer::PlaceTower(int Tower) {
+bool CPlayer::PlaceTower(int Tower) {
 	switch (Tower) {
 		case 1:
-			RemoveCurrency(15);
+			if (CurrentCurrency - 10 >= 0) {
+				RemoveCurrency(15);
+				return true;
+			}
+			else {
+				return false;
+			}
+			break;
+		case 2:
+			if (CurrentCurrency - 25 >= 0) {
+				RemoveCurrency(25);
+				return true;
+			}
+			else {
+				return false;
+			}
 			break;
 	}
+}
+
+std::string CPlayer::GetTAmount(std::vector<CTower*> amount) {
+	int size = amount.size();
+	std::string num = to_string(size);
+	return num;
 }
