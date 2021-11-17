@@ -18,7 +18,7 @@
 class CPlayer: public CObject{
   protected:  
 	  const INT MaxCurrency = 1000; ///< Maximum amount of currency the player may hold at one time
-	  int CurrentCurrency = 50; ///< Current currency the player has to purchase towers. Starts off with 50
+	  int CurrentCurrency = 700; ///< Current currency the player has to purchase towers. Starts off with 50
 	  int CurrentLives = 100; ///< Amount of lives that the player has to survive
 	  const INT MaxLives = 100; ///< Maximum amount of lives the player can have at one time
 	  bool Right = false;
@@ -52,7 +52,8 @@ class CPlayer: public CObject{
 	void RemoveCurrency(int Amount);
 	void AddLives(int Amount);
 	void AddCurrency(int Amount);
-    
+
+	bool isAlive();
 	std::string GetCurrency();
 	std::string GetLives();
 	std::string GetTAmount(std::vector<CTower*> amount);
