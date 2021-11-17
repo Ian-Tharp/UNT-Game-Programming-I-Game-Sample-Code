@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<!-- Game settings -->
+
+<settings>
+  <game name="Wave Shooter" />
+  <renderer width="1200" height="676"/>
+   
+  <font file="Media\Fonts\AverageSans_24.spritefont"/>
+
+  <!-- sprites -->
+   
+  <sprites path="Media\Images">
+    <sprite name="BlueTile" file="BlueTile" ext ="png" frames="5"/>
+    <sprite name="BrownTile" file="BrownTile" ext ="png" frames="5"/>
+    <sprite name="GrayTile" file="GrayTile" ext ="png" frames="5"/>
+    <sprite name="RedTile" file="RedTile" ext ="png" frames="5"/>
+	<sprite name="Tselect" file="Tselect.png"/>
+	<sprite name="Tunselect" file="Tunselect.png"/>
+	<sprite name="MenuPButton" file="MenuPButton.png"/>
+	<sprite name="MenuUButton" file="MenuUButton.png"/>
+	<sprite name="MenuCursor" file="MenuCursor.png"/>
+	<sprite name="Background" file="Background.png"/>
+	<sprite name="Background2" file="Background paper.png"/>
+    <sprite name="player" file="player.png"/>
+    <sprite name="turret" file="turret.png"/>
+    <sprite name="Tower" file="Tower" ext ="png" frames="17"/>    <sprite name="bullet" file="bullet.png"/>
+    <sprite name="bullet2" file="bullet2.png"/>
+    <sprite name="smoke" file="graysmoke.png"/>
+    <sprite name="spark" file="spark.png"/>
+     <sprite name="greenline" file="greenline.png"/>
+  </sprites>
+
+  <!-- sound -->
+  
+  <sounds  path="Media\Sounds"> 
+	<sound name="MenuMusic" file="MenuMusic.wav" instances="8"/>
+	<sound name="BossWave" file="BossWave.wav" instances="8"/>
+    <sound name="start" file="start.wav" instances="1"/>
+    <sound name="gun" file="44magnum.wav" instances="8"/>
+    <sound name="ricochet" file="ricochet.wav" instances="8"/>
+    <sound name="clang" file="clang.wav" instances="4"/>
+    <sound name="grunt" file="umph.wav" instances="2"/>
+    <sound name="boom" file="boom.wav" instances="4"/>
+  </sounds>
+</settings>
