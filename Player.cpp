@@ -11,8 +11,8 @@
 /// Create and initialize an player object given its initial position.
 /// \param p Initial position of player.
 
-CPlayer::CPlayer(const Vector2& p): CObject(eSprite::Player, p){ 
-  m_bStatic = false;
+CPlayer::CPlayer(const Vector2& p) : CObject(eSprite::Player, p) {
+	m_bStatic = false;
 } //constructor
 
 bool CPlayer::isAlive() {
@@ -29,9 +29,9 @@ void CPlayer::move() {
 	if (Right && xPos < 15) {
 		xPos++;
 	}
-    else if (Left && xPos > 0) {
-	    xPos--;
-    }
+	else if (Left && xPos > 0) {
+		xPos--;
+	}
 	else if (Up && yPos < 8) {
 		yPos++;
 	}
@@ -39,17 +39,13 @@ void CPlayer::move() {
 		yPos--;
 	}
 
-  m_vPos = Vector2((xPos + 0.5f) * ((size_t)m_pRenderer->GetWidth(eSprite::BlueTile) * 0.5f), 
-	  (8 - yPos + 0.5f) * ((size_t)m_pRenderer->GetWidth(eSprite::BlueTile) * 0.5f));
+	m_vPos = Vector2((xPos + 0.5f) * ((size_t)m_pRenderer->GetWidth(eSprite::BlueTile) * 0.5f),
+		(8 - yPos + 0.5f) * ((size_t)m_pRenderer->GetWidth(eSprite::BlueTile) * 0.5f));
 
 } //move
 
-const Vector2& CPlayer::GetPos() const {
-  return m_vPos;
-} //GetPos for sprite
-
 std::string CPlayer::GetPlayerPosition() {
-	XMFLOAT2 temp = GetPos();
+	XMFLOAT2 temp = m_vPos;
 	int x = temp.x;
 	int y = temp.y;
 	std::string tempStr = std::to_string(x);
@@ -145,232 +141,238 @@ std::string CPlayer::GetLives() {
 	return lives;
 }
 
+int CPlayer::GetCurrentCurrency() {
+	return CurrentCurrency;
+}
+
 //-------------------------------------------------------------------------------
 bool CPlayer::PlaceTower(int Tower) {
 	switch (Tower) {
 		//Tower 1 Placement
-		case 1:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 15 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 1:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 35 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 2 Placement
-		case 2:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 25 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 2:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 75 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 3 Placement
-		case 3:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 40 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 3:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 115 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 4 Placement
-		case 4:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 60 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 4:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 200 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 5 Placement
-		case 5:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 75 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 5:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 300 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 6 Placement
-		case 6:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 100 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 6:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 375 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 7 Placement
-		case 7:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 150 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 7:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 445 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 8 Placement
-		case 8:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 200 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 8:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 480 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 9 Placement
-		case 9:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 275 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 9:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 515 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 10 Placement
-		case 10:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 345 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 10:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 600 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 11 Placement
-		case 11:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 400 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 11:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 675 >= 0) {
 				return true;
 			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
 		//Tower 12 Placement
-		case 12:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 475 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 12:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 750 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 13 Placement
-		case 13:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 555 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 13:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 825 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 14 Placement
-		case 14:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 645 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 14:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 875 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 15 Placement
-		case 15:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 750 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 15:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 930 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
 		//Tower 16 Placement
-		case 16:
-			if (m_bGodMode == false) {
-				if (CurrentCurrency - 850 >= 0) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+	case 16:
+		if (m_bGodMode == false) {
+			if (CurrentCurrency - 995 >= 0) {
 				return true;
 			}
-			break;
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+		break;
+	default:
+		return false;
 	}
 }
 //-------------------------------------------------------------------------------
@@ -379,3 +381,24 @@ std::string CPlayer::GetTAmount(std::vector<CTower*> amount) {
 	std::string num = to_string(size);
 	return num;
 }
+
+void CPlayer::CollisionResponse(const Vector2& norm, float d, CObject* pObj) {
+	if (pObj)
+	{
+		if (pObj->m_nSpriteIndex != (UINT)eSprite::Bullet && pObj->m_nSpriteIndex != (UINT)eSprite::Bullet2
+			&& pObj->m_nSpriteIndex != (UINT)eSprite::Bullet3 && pObj->m_nSpriteIndex != (UINT)eSprite::Bullet4
+			&& pObj->m_nSpriteIndex != (UINT)eSprite::Bullet5 && pObj->m_nSpriteIndex != (UINT)eSprite::Bullet6
+			&& pObj->m_nSpriteIndex != (UINT)eSprite::Bullet7 && pObj->m_nSpriteIndex != (UINT)eSprite::Bullet8
+			&& pObj->m_nSpriteIndex != (UINT)eSprite::Bullet9 && pObj->m_nSpriteIndex != (UINT)eSprite::Bullet10
+			&& pObj->m_nSpriteIndex != (UINT)eSprite::Bullet11 && pObj->m_nSpriteIndex != (UINT)eSprite::Bullet12 
+			&& pObj->m_nSpriteIndex != (UINT)eSprite::Bullet13 && pObj->m_nSpriteIndex != (UINT)eSprite::Bullet14 
+			&& pObj->m_nSpriteIndex != (UINT)eSprite::Bullet15 && pObj->m_nSpriteIndex != (UINT)eSprite::Bullet16 
+			&& pObj->m_nSpriteIndex != (UINT)eSprite::Bullet17 && !(pObj->m_nSpriteIndex = UINT(eSprite::EnemyS)))
+		{
+			bool bStatic = false;
+			if (m_bDead)return; //dead, bail out
+
+			const Vector2 vOverlap = d * norm; //overlap in direction of this
+		}
+	}
+} //CollisionResponse
