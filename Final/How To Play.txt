@@ -3,6 +3,8 @@ A/Arrow Left	Move Left
 S/Arrow Down	Move Down
 D/Arrow Right	Move Right
 
+BACKSPACE/RETURN  Generate a random map
+
 E		Start Wave
 R		Toggle Autostart (Have to manually start next wave after this is toggled on)
 V		Toggle Gun Sounds
